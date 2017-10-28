@@ -7,16 +7,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-/**
- * This class implements java socket client
- * @author pankaj
- *
- */
 public class ChatClient {
 
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
         //IP and port of the server
-    	String ip = "10.0.28.131";
+    	String ip = "10.0.29.99";
         int port = 25565;
         
         //new socket for the server

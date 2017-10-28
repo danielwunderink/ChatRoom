@@ -10,11 +10,6 @@ import java.net.Socket;
 
 public class ChatServer {
 	
-	/**
-	 * This class implements java Socket server
-	 * @author pankaj
-	 *
-	 */	    
     //static ServerSocket variable
     private static ServerSocket server;
     //socket server port on which it will listen
@@ -24,15 +19,26 @@ public class ChatServer {
         //create the socket server object
         server = new ServerSocket(port);
         //keep listens indefinitely until receives 'exit' call or program terminates
+        
+        
+        PrintWriter outputToClient;
+        BufferedReader inputFromClient;
+        String clientInput;
+        String serverOutput;
         while(true){
             System.out.println("Waiting for client request");
             //creating socket and waiting for client connection
             Socket clientSocket = server.accept();
             //read from socket to ObjectInputStream object
-            PrintWriter outputToClient = new PrintWriter(clientSocket.getOutputStream(), true);
-            BufferedReader inputFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String clientInput;
-            String serverOutput;
+            outputToClient = new PrintWriter(clientSocket.getOutputStream(), true);
+            inputFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            do {
+            	clientInput = inputFromClient.readLine();
+            	System.out.println("Client: "+clientInput);
+                serverOutput = clientInput;
+                outputToClient.println(serverOutput);
+            } while (!clientInput.equalsIgnoreCase("exit"));
+            
             /*ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
             //convert ObjectInputStream object to String
             String message = (String) ois.readObject();
@@ -46,7 +52,7 @@ public class ChatServer {
             oos.close();*/
             clientSocket.close();
             //terminate the server if client sends exit request
-            if(message.equalsIgnoreCase("exit")) break;
+            if(clientInput.equalsIgnoreCase("exit")) break;
         }
         System.out.println("Shutting down Socket server!!");
         //close the ServerSocket object
