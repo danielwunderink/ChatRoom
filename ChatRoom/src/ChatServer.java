@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.lang.ClassNotFoundException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ChatServer {
 	
@@ -18,45 +19,13 @@ public class ChatServer {
     public static void main(String args[]) throws IOException, ClassNotFoundException{
         //create the socket server object
         server = new ServerSocket(port);
-        //keep listens indefinitely until receives 'exit' call or program terminates
-        
-        
-        PrintWriter outputToClient;
-        BufferedReader inputFromClient;
-        String clientInput;
-        String serverOutput;
-        while(true){
+        boolean running = true;
+        while(running){
             System.out.println("Waiting for client request");
             //creating socket and waiting for client connection
             Socket clientSocket = server.accept();
-            //read from socket to ObjectInputStream object
-            outputToClient = new PrintWriter(clientSocket.getOutputStream(), true);
-            inputFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            do {
-            	clientInput = inputFromClient.readLine();
-            	System.out.println("Client: "+clientInput);
-                serverOutput = clientInput;
-                outputToClient.println(serverOutput);
-            } while (!clientInput.equalsIgnoreCase("exit"));
-            
-            /*ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
-            //convert ObjectInputStream object to String
-            String message = (String) ois.readObject();
-            System.out.println("Message Received: " + message);
-            //create ObjectOutputStream object
-            ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-            //write object to Socket
-            oos.writeObject("Hi Client "+message);
-            //close resources
-            ois.close();
-            oos.close();*/
-            clientSocket.close();
-            //terminate the server if client sends exit request
-            if(clientInput.equalsIgnoreCase("exit")) break;
+            (new ChatServerThread(clientSocket)).start();
         }
-        System.out.println("Shutting down Socket server!!");
-        //close the ServerSocket object
-        server.close();
     }
 
 }
